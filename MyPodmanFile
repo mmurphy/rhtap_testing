@@ -1,0 +1,6 @@
+FROM node:lts-alpine
+WORKDIR /app
+COPY . .
+RUN sh build.sh
+EXPOSE 3333
+ENTRYPOINT ["npm", "start"]
