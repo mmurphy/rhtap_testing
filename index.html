@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Customer Issue Escalation Workflow Template</title>
+        <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.7/dist/handlebars.runtime.js"></script>
+        <script src="ciew.precompiled.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <section class="content">
+            <section class="inputform">
+                <h1>Customer Issue Escalation Workflow Template</h1>
+                {{> paramsform }}
+
+                <input type="button" id="btnGenerate" value="Generate">
+                <input type="button" id="btnSave" value="Save Values">
+                <input type="file" id="uploadFile" >
+        </section>
+        <section id="outputdocument"></div>
+    </section>
+    <script>
+        var template = Handlebars.templates.ciew;
+        var markdownConverter = new showdown.Converter({tables:true})
+
+        generateDocument() // generate with placeholder values
+
+        document.getElementById('btnGenerate').addEventListener("click", generateDocument);
+        document.getElementById('btnSave').addEventListener("click", saveValuesFile);
+        document.getElementById('uploadFile').addEventListener("change", uploadFile);
+
+
+        var inputs = document.getElementsByTagName("input");
+        for(var i = 0; i < inputs.length; i++) {
+            if(inputs[i].type == "checkbox") {
+                inputs[i].addEventListener("click", checkboxClicked); 
+            }  
+        }
+
+   function setOptions(options) {
+  {{> paramssetoptions }}
+
+  generateDocument();
+   }
+
+        function uploadFile() {
+            var file = document.getElementById("uploadFile").files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.readAsText(file, "UTF-8");
+                reader.onload = function (evt) {
+                    var options = JSON.parse(evt.target.result)
+                    setOptions(options)
+                }
+                reader.onerror = function (evt) {
+                    alert("Error uploading file");
+                }
+            }
+        }
+        
+      function saveValuesFile() {
+         const link = document.createElement("a");
+         const content = JSON.stringify(getOptions(), null, 2);
+         const file = new Blob([content], { type: 'application/json' });
+         link.href = URL.createObjectURL(file);
+         link.download = "ciewoptions.json";
+         link.click();
+         URL.revokeObjectURL(link.href);
+      };
+   
+        function getOptions() {
+            var options = {
+
+                {{> paramsoptions }}
+                
+                dummyLastValue:""
+                };
+
+            return options;
+                
+        };
+
+        function generateDocument() {
+
+
+            var options = getOptions();
+
+
+            var populatedMarkdown = template(options)
+            var populatedHtml = markdownConverter.makeHtml(populatedMarkdown);
+            document.getElementById('outputdocument').innerHTML = populatedHtml
+        };
+
+        function checkboxClicked(e) {
+            checkboxid = e.target.id
+            if(document.getElementById(checkboxid).checked) {
+                const collection = document.getElementsByClassName("dependson_"+checkboxid);
+                for (const c of collection) {
+                    c.style.display = "none";
+                }
+            } else {
+                const collection = document.getElementsByClassName("dependson_"+checkboxid);
+                for (const c of collection) {
+                    c.style.display = "inline";
+                }
+            }
+        }
+
+    </script>
+    </body>
+</html>

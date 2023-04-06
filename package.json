@@ -1,0 +1,25 @@
+{
+  "name": "ciew_template",
+  "version": "0.2.0",
+  "description": "Generate Customer Issue Escalation Workflow Template",
+  "scripts": {
+    "start": "node serve.js",
+    "generate": "handlebars ciew.handlebars -f public/ciew.precompiled.js",
+    "generatehtml": "hbs index.html --partial paramsform.hbs --partial paramsvalues.hbs --output ./public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.cee.redhat.com:mmurphy/ciew-template.git"
+  },
+  "author": "Martin Murphy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.cee.redhat.com/mmurphy/ciew-template/-/issues"
+  },
+  "homepage": "https://gitlab.cee.redhat.com/mmurphy/ciew-template",
+  "dependencies": {
+    "express": "^4.18.2",
+    "handlebars": "^4.7.7",
+    "hbs-cli": "^1.4.1"
+  }
+}
